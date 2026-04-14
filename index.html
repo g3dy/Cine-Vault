@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CineVault — Stream Everything</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="loader"><div class="spinner"><span></span><span></span><span></span></div></div>
+ 
+<!-- Navbar -->
+<nav id="navbar">
+  <a href="#" class="logo" onclick="showHome()">Cine<span>Vault</span></a>
+  <ul class="nav-links">
+    <li><a href="#" class="active" onclick="showHome()">Home</a></li>
+    <li><a href="#originals-sec">Originals</a></li>
+    <li><a href="#trending-sec">Trending</a></li>
+    <li><a href="#toprated-sec">Top Rated</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="search-wrap">
+      <div class="search-bar">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" placeholder="Search titles..." id="searchInput" autocomplete="off"/>
+      </div>
+      <div class="suggestions" id="suggestions"></div>
+    </div>
+    <button class="btn-signin">Sign In</button>
+  </div>
+</nav>
+ 
+<!-- Hero -->
+<div id="main-content">
+  <div class="hero">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-overlay-side"></div>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        FEATURED TONIGHT
+      </div>
+      <h1 class="hero-title" id="heroTitle">LOADING...</h1>
+      <div class="hero-meta">
+        <span class="rating" id="heroRating">★ —</span>
+        <span class="sep">·</span>
+        <span id="heroYear">—</span>
+        <span class="sep">·</span>
+        <span>Movie</span>
+      </div>
+      <p class="hero-desc" id="heroDesc">Fetching tonight's feature...</p>
+      <div class="hero-actions">
+        <button class="btn-play" onclick="openModal(heroMovie)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Where to Watch
+        </button>
+        <button class="btn-info" onclick="openModal(heroMovie)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          More Info
+        </button>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- Genre Pills -->
+  <div class="genres" id="genres"></div>
+ 
+  <!-- Originals -->
+  <section id="originals-sec">
+    <div class="section-header">
+      <h2 class="section-title"><span>Netflix</span> Originals</h2>
+      <button class="see-all" onclick="openGridView('originals','Netflix Originals','tv',null,213)">SEE ALL →</button>
+    </div>
+    <div class="row-wrap">
+      <button class="scroll-btn left" onclick="scrollRow('originals-row',-1)">‹</button>
+      <div class="row" id="originals-row">
+        <div class="skeleton sk-backdrop"></div><div class="skeleton sk-backdrop"></div><div class="skeleton sk-backdrop"></div>
+      </div>
+      <button class="scroll-btn right" onclick="scrollRow('originals-row',1)">›</button>
+    </div>
+  </section>
+ 
+  <!-- Trending -->
+  <section id="trending-sec">
+    <div class="section-header">
+      <h2 class="section-title">Trending <span>Now</span></h2>
+      <button class="see-all" onclick="openGridView('trending','Trending Now','movie',null,null)">SEE ALL →</button>
+    </div>
+    <div class="row-wrap">
+      <button class="scroll-btn left" onclick="scrollRow('trending-row',-1)">‹</button>
+      <div class="row" id="trending-row">
+        <div class="skeleton sk-poster"></div><div class="skeleton sk-poster"></div><div class="skeleton sk-poster"></div><div class="skeleton sk-poster"></div>
+      </div>
+      <button class="scroll-btn right" onclick="scrollRow('trending-row',1)">›</button>
+    </div>
+  </section>
+ 
+  <!-- Top Rated -->
+  <section id="toprated-sec">
+    <div class="section-header">
+      <h2 class="section-title">Top <span>Rated</span></h2>
+      <button class="see-all" onclick="openGridView('toprated','Top Rated','movie',null,null)">SEE ALL →</button>
+    </div>
+    <div class="row-wrap">
+      <button class="scroll-btn left" onclick="scrollRow('toprated-row',-1)">‹</button>
+      <div class="row" id="toprated-row">
+        <div class="skeleton sk-poster"></div><div class="skeleton sk-poster"></div><div class="skeleton sk-poster"></div><div class="skeleton sk-poster"></div>
+      </div>
+      <button class="scroll-btn right" onclick="scrollRow('toprated-row',1)">›</button>
+    </div>
+  </section>
+ 
+  <footer>
+    <div class="footer-logo">Cine<span>Vault</span></div>
+    <p>© 2025 CineVault · Data by TMDB & Watchmode API · Not for commercial use.</p>
+  </footer>
+</div>
+ 
+<!-- Full Grid View (See All / Genre) -->
+<div id="grid-view">
+  <div class="grid-view-header">
+    <button class="grid-back-btn" onclick="closeGridView()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back
+    </button>
+    <h2 class="grid-view-title" id="gridViewTitle">All Movies</h2>
+  </div>
+  <div class="movie-grid" id="movieGrid"></div>
+  <button class="grid-load-more" id="gridLoadMore" onclick="loadMoreGrid()">Load More</button>
+</div>
+ 
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-poster">
+      <img id="modalImg" src="" alt="" />
+      <div class="modal-poster-overlay"></div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <h2 class="modal-title" id="modalTitle"></h2>
+      <div class="modal-meta" id="modalMeta"></div>
+      <p class="modal-overview" id="modalOverview"></p>
+      <!-- Trailers -->
+      <div class="trailer-section">
+        <div class="trailer-label">Trailers &amp; Clips</div>
+        <div id="trailerStrip">
+          <div class="trailer-loading"><div class="spin-ring"></div>Loading trailers...</div>
+        </div>
+      </div>
+ 
+      <div class="streaming-section">
+        <div class="streaming-label">Where to Watch</div>
+        <div class="streaming-grid" id="streamingGrid">
+          <div class="streaming-loading"><div class="spin-ring"></div>Finding streaming options...</div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-play" id="watchNowBtn" onclick="openWatchPlayer()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Watch Now
+        </button>
+        <button class="btn-info" onclick="closeModal()">✕ Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- Fullscreen Trailer Player -->
+<div id="trailerOverlay">
+  <div class="trailer-player-header">
+    <span class="trailer-player-title" id="trailerPlayerTitle"></span>
+    <button class="trailer-close-btn" onclick="closeTrailer()">✕</button>
+  </div>
+  <div class="trailer-player-wrap">
+    <iframe id="trailerFrame" src="" allow="autoplay; fullscreen; encrypted-media" allowfullscreen></iframe>
+  </div>
+</div>
+ 
+<!-- Fullscreen Watch / SuperEmbed Player -->
+<div id="watchOverlay">
+  <!-- Always-visible floating close button sits above iframe -->
+  <button class="watch-float-close" onclick="closeWatchPlayer()" title="Close player">✕</button>
+  <div class="watch-esc-hint">Press ESC to exit</div>
+ 
+  <div class="watch-player-header">
+    <div class="watch-player-left">
+      <button class="trailer-close-btn" onclick="closeWatchPlayer()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      </button>
+      <span class="watch-player-title" id="watchPlayerTitle"></span>
+    </div>
+    <div class="watch-episode-controls" id="watchEpisodeControls" style="display:none">
+      <span style="font-size:0.8rem;color:var(--muted)">Season</span>
+      <select id="watchSeason" onchange="onSeasonChange()"></select>
+      <span style="font-size:0.8rem;color:var(--muted)">Episode</span>
+      <select id="watchEpisode" onchange="onEpisodeChange()"></select>
+    </div>
+    <div style="display:flex;align-items:center;gap:0.5rem;margin-left:auto;flex-wrap:wrap">
+      <span style="font-size:0.72rem;color:var(--muted)">Source:</span>
+      <div id="watchSourceBtns" style="display:flex;gap:0.4rem;flex-wrap:wrap"></div>
+      <span style="font-size:0.72rem;color:var(--muted);margin-left:0.5rem">ESC to exit</span>
+    </div>
+  </div>
+  <div class="watch-frame-wrap">
+    <div class="watch-loading" id="watchLoading">
+      <div class="spin-ring" style="width:28px;height:28px;border-width:3px"></div>
+      <span>Loading player...</span>
+    </div>
+    <iframe id="watchFrame" src="" allow="autoplay; fullscreen; encrypted-media" allowfullscreen
+      style="pointer-events:all"></iframe>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
