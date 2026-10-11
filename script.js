@@ -1,5 +1,5 @@
   // ── TMDB ─────────────────────────────────────────────────
-  const TMDB_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxMTYzM2NjMzdiMzVmMWJiYTY2YzAyZjEzY2I0NzI4ZiIsIm5iZiI6MTc3NTE4MDk2MS4zOTY5OTk4LCJzdWIiOiI2OWNmMWNhMTc0YTA2MTZkYjgyZjcyZTYiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.IpVKTo8bu_Xkl2HweSLnD0M290XXcQDpItp_orvcdcc';
+  const TMDB_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5ZmYwMjBkYWQ3MDMxNzI1NzY2YTU1ZmQwMGZjZTA3MiIsIm5iZiI6MTc3NTE4MDk2MS4zOTY5OTk4LCJzdWIiOiI2OWNmMWNhMTc0YTA2MTZkYjgyZjcyZTYiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.VcldAafkzRZjx2vvD88sOliimEt_ysG63hguvL0uItc';
   const TMDB_BASE  = 'https://api.themoviedb.org/3';
   const IMG_W500   = 'https://image.tmdb.org/t/p/w500';
   const IMG_ORIG   = 'https://image.tmdb.org/t/p/original';
