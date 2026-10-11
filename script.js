@@ -1,7 +1,22 @@
-  // ── API endpoints ─────────────────────────────────────────
-  const API_ENDPOINT = 'api.php';
+  // ── API credentials ───────────────────────────────────────
+  const TMDB_API_KEY = '9ff020dad7031725766a55fd00fce072';
+  const TMDB_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5ZmYwMjBkYWQ3MDMxNzI1NzY2YTU1ZmQwMGZjZTA3MiIsIm5iZiI6MTc3NTE4MDk2MS4zOTY5OTk4LCJzdWIiOiI2OWNmMWNhMTc0YTA2MTZkYjgyZjcyZTYiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.VcldAafkzRZjx2vvD88sOliimEt_ysG63hguvL0uItc';
+  const TMDB_BASE = 'https://api.themoviedb.org/3';
+  const TMDB_HDR = {
+    'Authorization': `Bearer ${TMDB_TOKEN}`,
+    'Content-Type': 'application/json'
+  };
+  const WM_KEY = '6t3PFCcYIvCi61PZdP6kMRHpIdn2oc0TmQ1fk2Hl';
+  const WM_BASE = 'https://api.watchmode.com/v1';
   const IMG_W500   = 'https://image.tmdb.org/t/p/w500';
   const IMG_ORIG   = 'https://image.tmdb.org/t/p/original';
+
+  function tmdbUrl(path) {
+    const [pathname, query = ''] = path.split('?');
+    const params = new URLSearchParams(query);
+    params.set('api_key', TMDB_API_KEY);
+    return `${TMDB_BASE}${pathname}?${params.toString()}`;
+  }
 
   const PLATFORMS = {
     203:{cls:'p-netflix',label:'Netflix',icon:'N'}, 26:{cls:'p-prime',label:'Prime Video',icon:'P'},
@@ -33,15 +48,16 @@
   // ── TMDB helper ──────────────────────────────────────────
   async function tmdb(path) {
     try {
-      const r = await fetch(`${API_ENDPOINT}?provider=tmdb&path=${encodeURIComponent(path)}`);
+      const r = await fetch(tmdbUrl(path), { headers: TMDB_HDR });
       const d = await r.json();
       return d;
     } catch(e) { return {}; }
   }
  
   async function getWatchmodeId(tmdbId, type) {
+    const field = type === 'tv' ? 'tmdb_tv_id' : 'tmdb_movie_id';
     try {
-      const r = await fetch(`${API_ENDPOINT}?provider=watchmode&action=search&type=${encodeURIComponent(type)}&tmdb_id=${encodeURIComponent(tmdbId)}`);
+      const r = await fetch(`${WM_BASE}/search/?apiKey=${encodeURIComponent(WM_KEY)}&search_field=${field}&search_value=${encodeURIComponent(tmdbId)}`);
       const d = await r.json();
       return d.title_results?.[0]?.id || null;
     } catch(e) { return null; }
@@ -53,7 +69,7 @@
     try {
       const wmId = await getWatchmodeId(tmdbId, type);
       if (!wmId) { wmCache[key] = null; return null; }
-      const r = await fetch(`${API_ENDPOINT}?provider=watchmode&action=sources&title_id=${encodeURIComponent(wmId)}`);
+      const r = await fetch(`${WM_BASE}/title/${encodeURIComponent(wmId)}/sources/?apiKey=${encodeURIComponent(WM_KEY)}&regions=US`);
       const s = await r.json();
       wmCache[key] = Array.isArray(s) ? s : null;
       return wmCache[key];
@@ -143,7 +159,7 @@
  
   async function loadGenres() {
     try {
-      const r = await fetch(`${API_ENDPOINT}?provider=tmdb&path=${encodeURIComponent('/genre/movie/list?language=en-US')}`);
+      const r = await fetch(tmdbUrl('/genre/movie/list?language=en-US'), {headers:TMDB_HDR});
       const d = await r.json();
       const wrap = document.getElementById('genres');
       const setActive = pill => { document.querySelectorAll('.genre-pill').forEach(p=>p.classList.remove('active')); pill.classList.add('active'); };
@@ -554,7 +570,7 @@
   async function fetchSuggestions(q) {
     try {
       const path = `/search/multi?query=${encodeURIComponent(q)}&language=en-US&page=1`;
-      const r = await fetch(`${API_ENDPOINT}?provider=tmdb&path=${encodeURIComponent(path)}`);
+      const r = await fetch(tmdbUrl(path), {headers:TMDB_HDR});
       const d = await r.json();
       const results = (d.results||[]).filter(m => m.media_type !== 'person' && (m.poster_path||m.backdrop_path)).slice(0,6);
       if (!results.length) { closeSuggestions(); return; }
